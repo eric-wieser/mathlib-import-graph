@@ -441,6 +441,7 @@ fetch("https://leanprover-community.github.io/mathlib_docs/import.gexf").then((r
       state.hoveredNode = undefined;
       state.hoveredDescendants = undefined;
       state.hoveredAncestors = undefined;
+      setStatus(null);
     }
 
     renderer.refresh();
