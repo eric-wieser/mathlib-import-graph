@@ -106,6 +106,9 @@
   </div>
 
 <script type="text/javascript">
+  
+var params = new URLSearchParams(window.location.search);
+var docs_url = params.get("docs_url") || "https://leanprover-community.github.io/mathlib_docs/";
 
 // From stackoverflow
 /**
@@ -152,7 +155,7 @@ var common_prefix = function(a, b) {
 }
 
 
-fetch("https://leanprover-community.github.io/mathlib_docs/import.gexf").then((res) => res.text()).then((gexf) => {
+fetch(docs_url + "import.gexf").then((res) => res.text()).then((gexf) => {
   let container = document.getElementById('sigma-example');
   let key = document.getElementById('key');
   let pause = document.getElementById('pause');
@@ -452,7 +455,7 @@ fetch("https://leanprover-community.github.io/mathlib_docs/import.gexf").then((r
   renderer.on("leaveNode", () => { setHoveredNode(undefined); });
   renderer.on("clickNode", ({ node }) => {
     let path = graph.getNodeAttribute(node, 'path');
-    window.open("https://leanprover-community.github.io/mathlib_docs/"  + path.join('/') + ".html");
+    window.open(docs_url + path.join('/') + ".html");
   });
 
 });
