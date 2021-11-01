@@ -437,17 +437,23 @@ fetch("https://leanprover-community.github.io/mathlib_docs/import.gexf").then((r
       state.hoveredDescendants = descendants;
       state.hoveredAncestors = ancestors;
       setStatus((descendants.size - 1) + " files consisting of "+ndecls+" declarations are imported by this file, which in turn is imported by " + (ancestors.size - 1) + " files");
+      container.style.cursor = "pointer";
     } else {
       state.hoveredNode = undefined;
       state.hoveredDescendants = undefined;
       state.hoveredAncestors = undefined;
       setStatus(null);
+      container.style.cursor = "inherit";
     }
 
     renderer.refresh();
   }
   renderer.on("enterNode", ({ node }) => { setHoveredNode(node);  });
   renderer.on("leaveNode", () => { setHoveredNode(undefined); });
+  renderer.on("clickNode", ({ node }) => {
+    let path = graph.getNodeAttribute(node, 'path');
+    window.open("https://leanprover-community.github.io/mathlib_docs/"  + path.join('/') + ".html");
+  });
 
 });
 </script>
