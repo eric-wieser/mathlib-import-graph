@@ -166,7 +166,8 @@ fetch(docs_url + "import.gexf").then((res) => res.text()).then((gexf) => {
   var state = {
     hoveredNode: undefined,
     hoveredDescendants: undefined,
-    hoveredPath: undefined
+    hoveredPath: undefined,
+    defaultNode: params.get("highlight"),
   };
 
   // unpack the node labels into data
@@ -352,6 +353,11 @@ fetch(docs_url + "import.gexf").then((res) => res.text()).then((gexf) => {
         else {
           res.label = undefined;
           res.color = res.dim_color;
+        }
+      }
+      else if (state.defaultNode) {
+        if (state.defaultNode === node) {
+          res.highlighted = true;
         }
       }
 
