@@ -166,6 +166,8 @@ fetch(docs_url + "import.gexf").then((res) => res.text()).then((gexf) => {
   let pause = document.getElementById('pause');
   let graph = graphologyLibrary.gexf.parse(graphology.Graph, gexf);
   let rev_graph = graphologyLibrary.operators.reverse(graph);
+  let searchInput = document.getElementById("search-input");
+  let searchSuggestions = document.getElementById("suggestions");
 
   // interaction state
   var state = {
