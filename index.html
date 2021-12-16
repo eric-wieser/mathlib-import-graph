@@ -447,6 +447,15 @@ fetch(docs_url + "import.gexf").then((res) => res.text()).then((gexf) => {
         renderer.refresh();
     }
 
+    searchInput.addEventListener("input", ()=>{
+        setSearchQuery(searchInput.value || "");
+    }
+    );
+    searchInput.addEventListener("blur", ()=>{
+        setSearchQuery("");
+    }
+    );
+
 
   let statusElem = document.getElementById('statusWrapper');
   let statusMsgElem = document.getElementById('statusMessage');
