@@ -297,14 +297,15 @@ fetch(docs_url + "import.gexf").then((res) => res.text()).then((gexf) => {
     node_data.y = 0.1*r * Math.sin(theta * 2 * Math.PI);
   }
 
-  var force_atlas_settings = {
-    barnesHutOptimize: false,
-    strongGravityMode: false,
-    gravity: 0.05,
-    scalingRatio: 10,
-    slowDown: 10,
-    edgeWeightInfluence: 1,
-  };
+  var force_atlas_settings =graphologyLibrary.layoutForceAtlas2.inferSettings(graph);
+
+//    barnesHutOptimize: false,
+//    strongGravityMode: false,
+//    gravity: 0.05,
+//    scalingRatio: 10,
+//    slowDown: 10,
+//    edgeWeightInfluence: 1,
+//  };
 
   // run the optimizer a little
   graphologyLibrary.layoutForceAtlas2.assign(graph, {
