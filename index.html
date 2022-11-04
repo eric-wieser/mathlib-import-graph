@@ -154,11 +154,11 @@ var common_prefix = function(a, b) {
   return i;
 }
 
+let container = document.getElementById('sigma-example');
+let key = document.getElementById('key');
+let pause = document.getElementById('pause');
 
-fetch(docs_url + "import.gexf").then((res) => res.text()).then((gexf) => {
-  let container = document.getElementById('sigma-example');
-  let key = document.getElementById('key');
-  let pause = document.getElementById('pause');
+var render_gexf = (gexf) => {
   let graph = graphologyLibrary.gexf.parse(graphology.Graph, gexf);
   let rev_graph = graphologyLibrary.operators.reverse(graph);
 
@@ -169,6 +169,7 @@ fetch(docs_url + "import.gexf").then((res) => res.text()).then((gexf) => {
     hoveredPath: undefined,
     defaultNode: params.get("highlight"),
   };
+  var default_hover = !!params.get("default_hover");
 
   // unpack the node labels into data
   for (let [node, node_data] of graph.nodeEntries()) {
@@ -221,6 +222,7 @@ fetch(docs_url + "import.gexf").then((res) => res.text()).then((gexf) => {
   };
 
   // build the key
+  while(key.firstChild) key.removeChild(key.lastChild);
   var keyElems = new Map();
   for (let top_level of Array.from(tree.keys()).sort()) {
     var li = document.createElement('li');
@@ -322,7 +324,10 @@ fetch(docs_url + "import.gexf").then((res) => res.text()).then((gexf) => {
   });
 
   window.graph = graph;
-
+  if (window.renderer) {
+    window.renderer.kill();
+    delete window.renderer;
+  }
   window.renderer = new Sigma.Sigma(graph, container, {
     defaultEdgeType: "arrow",
     defaultEdgeColor: "#c0c0c0",
@@ -410,6 +415,7 @@ fetch(docs_url + "import.gexf").then((res) => res.text()).then((gexf) => {
 
   for (let [top_level, li] of keyElems) {
     li.addEventListener('mouseenter', (event) => {
+      setHoveredNode(undefined);
       state.hoveredPath = top_level;
       let nfiles = 0;
       let ndecls = 0;
@@ -424,6 +430,7 @@ fetch(docs_url + "import.gexf").then((res) => res.text()).then((gexf) => {
     });
     li.addEventListener('mouseleave', (event) => {
       state.hoveredPath = undefined;
+      setHoveredNode(default_hover ? state.defaultNode : undefined);
       setStatus(null);
       renderer.refresh();
     });
@@ -458,12 +465,28 @@ fetch(docs_url + "import.gexf").then((res) => res.text()).then((gexf) => {
     renderer.refresh();
   }
   renderer.on("enterNode", ({ node }) => { setHoveredNode(node);  });
-  renderer.on("leaveNode", () => { setHoveredNode(undefined); });
+  renderer.on("leaveNode", () => { setHoveredNode(default_hover ? state.defaultNode : undefined); });
   renderer.on("clickNode", ({ node }) => {
     let path = graph.getNodeAttribute(node, 'path');
     window.open(docs_url + path.join('/') + ".html");
   });
 
+  setHoveredNode(default_hover ? state.defaultNode : undefined);
+};
+
+fetch(docs_url + "import.gexf").then((res) => res.text()).then(render_gexf);
+
+container.addEventListener("dragover",  ev => {
+  event.preventDefault();
+});
+container.addEventListener('drop', ev => {
+  ev.preventDefault();
+  for (const item of ev.dataTransfer.items) {
+    if (item.kind == "file") {
+      item.getAsFile().text().then(render_gexf);
+      break;
+    }
+  }
 });
 </script>
 
